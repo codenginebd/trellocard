@@ -1,0 +1,2 @@
+class TrelloCardException(Exception):
+    pass

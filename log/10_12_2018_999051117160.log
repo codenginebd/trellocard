@@ -1,0 +1,50 @@
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  Starting TrelloCard Sync program at 2018-12-10 15:12:38.0
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  ======================= Start Program - 999051117160 =======================
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  Reading API credentials
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  API Credentials read done
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  Reading board ID to sync
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  Read done for board ID to sync
+2018-12-10 21:12:38,201 [MainThread  ] [INFO ]  Reading card mapping file path
+2018-12-10 21:12:38,217 [MainThread  ] [INFO ]  card mapping file path found: mapping/card_mapping.csv
+2018-12-10 21:12:38,217 [MainThread  ] [INFO ]  Checking if card mapping file is writable or not
+2018-12-10 21:12:38,217 [MainThread  ] [INFO ]  Found mapping/card_mapping.csv writable
+2018-12-10 21:12:38,217 [MainThread  ] [INFO ]  Reading client board id mapping file path
+2018-12-10 21:12:38,229 [MainThread  ] [INFO ]  client board id mapping file found: mapping/client_board_mapping.csv
+2018-12-10 21:12:38,231 [MainThread  ] [INFO ]  Reading client board mapping
+2018-12-10 21:12:38,234 [MainThread  ] [WARNI]  Found empty line 2 in client board mapping: mapping/client_board_mapping.csv. Data: ['Bartons;dta4etnX']
+2018-12-10 21:12:38,236 [MainThread  ] [WARNI]  Found empty line 3 in client board mapping: mapping/client_board_mapping.csv. Data: ['Belinda Riordan;FmlQ9dO6']
+2018-12-10 21:12:38,239 [MainThread  ] [WARNI]  Found empty line 4 in client board mapping: mapping/client_board_mapping.csv. Data: ['Capital Partners;PIU28Kbp']
+2018-12-10 21:12:38,241 [MainThread  ] [WARNI]  Found empty line 5 in client board mapping: mapping/client_board_mapping.csv. Data: ['DC Financial;EBID2dnm']
+2018-12-10 21:12:38,244 [MainThread  ] [WARNI]  Found empty line 6 in client board mapping: mapping/client_board_mapping.csv. Data: ['Equitem;vXSkQ7ME']
+2018-12-10 21:12:38,247 [MainThread  ] [WARNI]  Found empty line 7 in client board mapping: mapping/client_board_mapping.csv. Data: ['Foundation Partners;hDYzzDKf']
+2018-12-10 21:12:38,250 [MainThread  ] [WARNI]  Found empty line 8 in client board mapping: mapping/client_board_mapping.csv. Data: ['Frances Insurance;0APxasdu']
+2018-12-10 21:12:38,252 [MainThread  ] [WARNI]  Found empty line 9 in client board mapping: mapping/client_board_mapping.csv. Data: ['GJO Financial Services;5eQJEN7J']
+2018-12-10 21:12:38,255 [MainThread  ] [WARNI]  Found empty line 10 in client board mapping: mapping/client_board_mapping.csv. Data: ['IAS;MW0BQBHF']
+2018-12-10 21:12:38,258 [MainThread  ] [WARNI]  Found empty line 11 in client board mapping: mapping/client_board_mapping.csv. Data: ['Incite Wealth;qFk1LsJ6']
+2018-12-10 21:12:38,263 [MainThread  ] [WARNI]  Found empty line 12 in client board mapping: mapping/client_board_mapping.csv. Data: ['Incito Wealth;yZmYdZWJ']
+2018-12-10 21:12:38,266 [MainThread  ] [WARNI]  Found empty line 13 in client board mapping: mapping/client_board_mapping.csv. Data: ['LM Wealth Partners;6UorGt8u']
+2018-12-10 21:12:38,268 [MainThread  ] [WARNI]  Found empty line 14 in client board mapping: mapping/client_board_mapping.csv. Data: ['RPS Advisory;DpJt8IhS']
+2018-12-10 21:12:38,271 [MainThread  ] [WARNI]  Found empty line 15 in client board mapping: mapping/client_board_mapping.csv. Data: ['Stonegate;sEcB4yFR']
+2018-12-10 21:12:38,273 [MainThread  ] [WARNI]  Found empty line 16 in client board mapping: mapping/client_board_mapping.csv. Data: ['The Practice;B0T2MB3l']
+2018-12-10 21:12:38,276 [MainThread  ] [WARNI]  Found empty line 17 in client board mapping: mapping/client_board_mapping.csv. Data: ['Vital Financial;8mtuZd5M']
+2018-12-10 21:12:38,279 [MainThread  ] [WARNI]  Found empty line 18 in client board mapping: mapping/client_board_mapping.csv. Data: ['Well Insured;jUFJbPMg']
+2018-12-10 21:12:38,281 [MainThread  ] [INFO ]  Read done client board mapping
+2018-12-10 21:12:38,283 [MainThread  ] [INFO ]  *********************************** start content: client board mapping ************************************
+2018-12-10 21:12:38,286 [MainThread  ] [INFO ]  {}
+2018-12-10 21:12:38,289 [MainThread  ] [INFO ]  *********************************** end content: client board mapping ************************************
+2018-12-10 21:12:38,292 [MainThread  ] [INFO ]  Creating API instance
+2018-12-10 21:12:38,294 [MainThread  ] [INFO ]  API instance created
+2018-12-10 21:12:38,296 [MainThread  ] [INFO ]  Reading all cards in the board id to sync: rEICc3JH
+2018-12-10 21:12:38,299 [MainThread  ] [INFO ]  Performing HTTP get with the following information
+2018-12-10 21:12:38,301 [MainThread  ] [INFO ]  URL: https://api.trello.com/1/boards/rEICc3JH/cards?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02
+Params: None
+JSON: False
+2018-12-10 21:12:38,310 [MainThread  ] [DEBUG]  Starting new HTTPS connection (1): api.trello.com:443
+2018-12-10 21:12:41,575 [MainThread  ] [DEBUG]  https://api.trello.com:443 "GET /1/boards/rEICc3JH/cards?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02 HTTP/1.1" 200 12175
+2018-12-10 21:12:44,295 [MainThread  ] [INFO ]  Response returned with status code: 200
+2018-12-10 21:12:44,295 [MainThread  ] [INFO ]  20 cards found in board: rEICc3JH
+2018-12-10 21:12:44,295 [MainThread  ] [INFO ]  *********************** Content start: CARDS in Board: rEICc3JH *********************** 
+2018-12-10 21:12:44,295 [MainThread  ] [INFO ]  ['5c0df82dfec49603ea545bf6', '5c09d1d75e97857bb0ffc9ee', '5c05ec5073dae115c2fb2d09', '5c060f8be3eaed43078bb30e', '5c062dc5e8e6166b3129fd09', '5c05bbc51164122f44ce4c04', '5c085a841932f7591d73f022', '5c08607a718880348d9f01dc', '5c08f662b91c82578b9ec228', '5c0deea90324006a380ef124', '5c0759d91fbdc16c27c779c5', '5c05fc302ace6843143717dc', '5c063adc9bc4f9841883a8cc', '5c04d777f4cd2f1d5e9ed3c7', '5c04bbe8124acc3bf8505779', '5c047b30493b255c8e79edee', '5c0452187da6b53c043d99c6', '5c04be727229365506700d1c', '5bff7a6f7265dc82b44d6e94', '5c04bdb809bb341c683be7f7']
+2018-12-10 21:12:44,310 [MainThread  ] [INFO ]  *********************** Content End: CARDS in Board: rEICc3JH *********************** 
+2018-12-10 21:12:44,310 [MainThread  ] [INFO ]  ======================= End Program - 999051117160 =======================
+2018-12-10 21:12:44,310 [MainThread  ] [INFO ]  Ending TrelloCard Sync program at 2018-12-10 15:12:44.0
