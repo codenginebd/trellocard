@@ -1,0 +1,52 @@
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  Starting TrelloCard Sync program at 2018-12-10 17:00:09.0
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  ======================= Start Program - 953013471898 =======================
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  Reading API credentials
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  API Credentials read done
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  Reading board ID to sync
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  Read done for board ID to sync
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  Reading card mapping file path
+2018-12-10 23:00:09,707 [MainThread  ] [INFO ]  card mapping file path found: mapping/card_mapping.csv
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Checking if card mapping file is writable or not
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Found mapping/card_mapping.csv writable
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Reading client board id mapping file path
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  client board id mapping file found: mapping/client_board_mapping.csv
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Reading client board mapping
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Read done client board mapping
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  *********************************** start content: client board mapping ************************************
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  {'Bartons': 'dta4etnX', 'Belinda Riordan': 'FmlQ9dO6', 'Capital Partners': 'PIU28Kbp', 'DC Financial': 'EBID2dnm', 'Equitem': 'vXSkQ7ME', 'Foundation Partners': 'hDYzzDKf', 'Frances Insurance': '0APxasdu', 'GJO Financial Services': '5eQJEN7J', 'IAS': 'MW0BQBHF', 'Incite Wealth': 'qFk1LsJ6', 'Incito Wealth': 'yZmYdZWJ', 'LM Wealth Partners': '6UorGt8u', 'RPS Advisory': 'DpJt8IhS', 'Stonegate': 'sEcB4yFR', 'The Practice': 'B0T2MB3l', 'Vital Financial': '8mtuZd5M', 'Well Insured': 'jUFJbPMg'}
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  *********************************** end content: client board mapping ************************************
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Creating API instance
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  API instance created
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Reading all cards in the board id to sync: rEICc3JH
+2018-12-10 23:00:09,723 [MainThread  ] [DEBUG]  Calling API method: read_cards_in_board
+2018-12-10 23:00:09,723 [MainThread  ] [DEBUG]  API request Params: {'board_id': 'rEICc3JH'}
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  Performing HTTP get with the following information
+2018-12-10 23:00:09,723 [MainThread  ] [INFO ]  URL: https://api.trello.com/1/boards/rEICc3JH/cards?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02
+Params: None
+JSON: False
+2018-12-10 23:00:09,735 [MainThread  ] [DEBUG]  Starting new HTTPS connection (1): api.trello.com:443
+2018-12-10 23:00:12,101 [MainThread  ] [DEBUG]  https://api.trello.com:443 "GET /1/boards/rEICc3JH/cards?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02 HTTP/1.1" 200 12175
+2018-12-10 23:00:12,382 [MainThread  ] [INFO ]  Response returned with status code: 200
+2018-12-10 23:00:12,397 [MainThread  ] [INFO ]  20 cards found in board: rEICc3JH
+2018-12-10 23:00:12,397 [MainThread  ] [INFO ]  *********************** Content start: CARDS in Board: rEICc3JH *********************** 
+2018-12-10 23:00:12,397 [MainThread  ] [INFO ]  ['5c0df82dfec49603ea545bf6', '5c09d1d75e97857bb0ffc9ee', '5c05ec5073dae115c2fb2d09', '5c060f8be3eaed43078bb30e', '5c062dc5e8e6166b3129fd09', '5c05bbc51164122f44ce4c04', '5c085a841932f7591d73f022', '5c08607a718880348d9f01dc', '5c08f662b91c82578b9ec228', '5c0deea90324006a380ef124', '5c0759d91fbdc16c27c779c5', '5c05fc302ace6843143717dc', '5c063adc9bc4f9841883a8cc', '5c04d777f4cd2f1d5e9ed3c7', '5c04bbe8124acc3bf8505779', '5c047b30493b255c8e79edee', '5c0452187da6b53c043d99c6', '5c04be727229365506700d1c', '5bff7a6f7265dc82b44d6e94', '5c04bdb809bb341c683be7f7']
+2018-12-10 23:00:12,409 [MainThread  ] [INFO ]  *********************** Content End: CARDS in Board: rEICc3JH *********************** 
+2018-12-10 23:00:12,411 [MainThread  ] [DEBUG]  Calling API method: read_card_client_name
+2018-12-10 23:00:12,412 [MainThread  ] [DEBUG]  API request Params: {'board_id': 'rEICc3JH', 'card_id': '5c0df82dfec49603ea545bf6'}
+2018-12-10 23:00:12,414 [MainThread  ] [INFO ]  Performing HTTP get with the following information
+2018-12-10 23:00:12,416 [MainThread  ] [INFO ]  URL: https://api.trello.com/1/boards/rEICc3JH/customFields?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02
+Params: None
+JSON: False
+2018-12-10 23:00:12,422 [MainThread  ] [DEBUG]  Starting new HTTPS connection (1): api.trello.com:443
+2018-12-10 23:00:13,366 [MainThread  ] [DEBUG]  https://api.trello.com:443 "GET /1/boards/rEICc3JH/customFields?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02 HTTP/1.1" 200 2438
+2018-12-10 23:00:13,370 [MainThread  ] [INFO ]  Response returned with status code: 200
+2018-12-10 23:00:13,371 [MainThread  ] [INFO ]  Performing HTTP get with the following information
+2018-12-10 23:00:13,372 [MainThread  ] [INFO ]  URL: https://api.trello.com/1/cards/5c0df82dfec49603ea545bf6?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02&fields=name&customFieldItems=true
+Params: None
+JSON: False
+2018-12-10 23:00:13,375 [MainThread  ] [DEBUG]  Starting new HTTPS connection (1): api.trello.com:443
+2018-12-10 23:00:14,199 [MainThread  ] [DEBUG]  https://api.trello.com:443 "GET /1/cards/5c0df82dfec49603ea545bf6?key=87ec21ab70e9c43360b0f12ab83862ce&token=2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02&fields=name&customFieldItems=true HTTP/1.1" 200 242
+2018-12-10 23:00:14,219 [MainThread  ] [INFO ]  Response returned with status code: 200
+2018-12-10 23:00:14,221 [MainThread  ] [INFO ]  Card ID: 5c0df82dfec49603ea545bf6 and Client Name: GJO Financial Services
+2018-12-10 23:00:14,224 [MainThread  ] [INFO ]  ======================= End Program - 953013471898 =======================
+2018-12-10 23:00:14,226 [MainThread  ] [INFO ]  Ending TrelloCard Sync program at 2018-12-10 17:00:14.0
