@@ -31,7 +31,7 @@ class FileManager(object):
             os.remove(file_path)
 
     @classmethod
-    def read_csv_file(cls, file_path, delim=','):
+    def read_csv_file(cls, file_path, delim=';'):
         lines = []
         with open(file_path, newline='', encoding='iso-8859-1') as csvfile:
             source_file = csv.reader(csvfile, delimiter=delim)
@@ -40,7 +40,7 @@ class FileManager(object):
         return lines
 
     @classmethod
-    def write_csv_file(cls, file_path, data, delim=','):
+    def write_csv_file(cls, file_path, data, delim=';'):
         try:
             file_mode = 'w'
             if os.path.exists(file_path):
@@ -76,7 +76,7 @@ class FileManager(object):
     @classmethod
     def save_card_mapping(cls, card_mapping_file_path, source_card_id, destination_card_id, client_name):
         data_row = [source_card_id, destination_card_id, client_name]
-        return cls.write_csv_file(card_mapping_file_path, data_row)
+        return cls.write_csv_file(card_mapping_file_path, data_row, delim=';')
 
     @classmethod
     def read_corresponding_destination_card_id(cls, file_path, card_id_to_find):
@@ -106,12 +106,18 @@ class FileManager(object):
         new_rows = [row for row in rows if card_id not in row]
         cls.delete_file(file_path)
         for row in new_rows:
-            cls.write_csv_file(file_path, row)
+            cls.write_csv_file(file_path, row, delim=';')
 
     @classmethod
     def read_mapping_source_card_list(cls, file_path):
         rows = cls.read_csv_file(file_path, delim=';')
         source_card_list = [row[0].strip() for row in rows if row]
         return source_card_list
+
+if __name__ == "__main__":
+    card_id = '5bd74633189ee6468fb709d3'
+    path = "D:\\Projects\\trellocard\\mapping1\\card_mapping.csv"
+    FileManager.remove_card_id_mapping(path, card_id)
+
 
 

@@ -94,7 +94,11 @@ class TrelloCardSyncProgram(object):
         logger.log_info("API instance created")
 
         logger.log_info("Reading all cards in the board id to sync: %s" % self.board_id_to_sync)
-        self.cards = self.api.call_api("read_cards_in_board", board_id=self.board_id_to_sync)
+        try:
+            self.cards = self.api.call_api("read_cards_in_board", board_id=self.board_id_to_sync)
+        except Exception as exp:
+            logger.log_warning("cards read failed. Exception: %s" % (str(exp)))
+            self.cards = None
 
         if not self.cards:
             logger.log_warning("No associated cards found with the board id: %s. Aborting..." % self.board_id_to_sync)
@@ -160,132 +164,135 @@ class TrelloCardSyncProgram(object):
 
     def perform_sync(self):
         for card_id in self.cards:
-            client_name = self.api.call_api("read_card_client_name", board_id=self.board_id_to_sync, card_id=card_id)
-            logger.log_info("Card ID: %s and Client Name: %s" % (card_id, client_name))
+            try:
+                client_name = self.api.call_api("read_card_client_name", board_id=self.board_id_to_sync, card_id=card_id)
+                logger.log_info("Card ID: %s and Client Name: %s" % (card_id, client_name))
 
-            if client_name and client_name in self.client_board_mapping:
-                destination_board_id = self.client_board_mapping[client_name]
-                # Get card information
+                if client_name and client_name in self.client_board_mapping:
+                    destination_board_id = self.client_board_mapping[client_name]
+                    # Get card information
 
-                # TrelloCard
-                logger.log_info("Reading trello card: %s" % card_id)
-                trellocard_entity = self.api.call_api("read_trello_card", card_id=card_id)
+                    # TrelloCard
+                    logger.log_info("Reading trello card: %s" % card_id)
+                    trellocard_entity = self.api.call_api("read_trello_card", card_id=card_id)
 
-                card_list_id = trellocard_entity.card_list_id
-                card_name = trellocard_entity.card_name
-                card_due_date = trellocard_entity.card_due_date
-                card_description = trellocard_entity.card_description
-                card_attachments = trellocard_entity.card_attachments
+                    card_list_id = trellocard_entity.card_list_id
+                    card_name = trellocard_entity.card_name
+                    card_due_date = trellocard_entity.card_due_date
+                    card_description = trellocard_entity.card_description
+                    card_attachments = trellocard_entity.card_attachments
 
-                card_quote, card_owner = self.api.call_api("read_card_custom_fields",
-                                                           board_id=self.board_id_to_sync,
-                                                           card_id=card_id)
-                # Get the corresponding destination card id in file
-                destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path, card_id)
+                    card_quote, card_owner = self.api.call_api("read_card_custom_fields",
+                                                               board_id=self.board_id_to_sync,
+                                                               card_id=card_id)
+                    # Get the corresponding destination card id in file
+                    destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path, card_id)
 
-                logger.log_info("card_list_id=%s, card_name=%s, card_due_date=%s, card_description=%s, "
-                                "card_attachments=%s, card_quote=%s, card_owner=%s, destination_card_id=%s" %
-                                (card_list_id, card_name, card_due_date, card_description, str(card_attachments),
-                                 card_quote, card_owner, destination_card_id))
+                    logger.log_info("card_list_id=%s, card_name=%s, card_due_date=%s, card_description=%s, "
+                                    "card_attachments=%s, card_quote=%s, card_owner=%s, destination_card_id=%s" %
+                                    (card_list_id, card_name, card_due_date, card_description, str(card_attachments),
+                                     card_quote, card_owner, destination_card_id))
 
-                if not destination_card_id:
-                    logger.log_info("No corresponding destination card id for card id: '%s', "
-                                    "the card has never been synced, we need to create it." % card_id)
-
-                    self.sync_new_card(card_id, card_list_id, destination_board_id, card_name,
-                      card_due_date, card_description, card_attachments, client_name,
-                      card_quote, card_owner)
-
-                    logger.log_info("New card added to the destination board")
-                else:
-                    # Check if the client name is the same as the last time it was synced
-                    destination_client_name = FileManager.read_corresponding_destination_client_name(card_id)
-                    # If names are identical then update the card
-                    if client_name == destination_client_name:
-                        logger.log_info("Card synced before with the same name. Updating now...")
-                        # Update name, due date and description
-                        updated = self.api.call_api("update_card", card_id=destination_card_id,
-                                                    name=card_name,
-                                                    due_date=card_due_date,
-                                                    description=card_description)
-                        if updated:
-                            logger.log_info("Card updated with name, due date and description")
-                        else:
-                            logger.log_info("Card update failed with name, due date and description")
-
-                        logger.log_info("Deleting card attachments")
-                        self.api.call_api("delete_card_attachments", card_id=destination_card_id)
-                        logger.log_info("Existing attachments deleted. Now adding new attachments")
-
-                        self.api.call_api("add_card_attachments", card_id=destination_card_id, card_attachments=card_attachments)
-                        logger.log_info("New attachments updated")
-
-                        logger.log_info("Updating quote")
-                        updated = self.api.call_api("update_card_quote", board_id=destination_board_id,
-                                                    card_id=destination_card_id, quote_value=card_quote)
-                        if updated:
-                            logger.log_info("Card quote updated")
-                        else:
-                            logger.log_info("Card quote update failed")
-
-                        logger.log_info("Updating card owner")
-                        updated = self.api.call_api("update_card_owner", board_id=destination_board_id,
-                                                    card_id=destination_card_id, owner=card_owner)
-                        if updated:
-                            logger.log_info("Card owner updated")
-                        else:
-                            logger.log_info("Card owner update failed")
-
-                        logger.log_info("Checking whether the card list has been changed or not")
-                        origin_list_name = self.api.call_api("read_card_list_name_formatted", card_list_id=card_list_id)
-                        trellocard_ = self.api.call_api("read_trello_card", card_id=destination_card_id, basic_info_only=True)
-
-                        destination_list_name = self.api.call_api("read_card_list_name_formatted",
-                                                                  card_list_id=trellocard_.card_list_id)
-
-                        logger.log_info("Checking if the card was moved to another list then move it")
-                        if destination_list_name != origin_list_name:
-                            logger.log_info("Card list was changed. Updating it")
-                            destination_list_id = self.api.call_api("read_list_id",
-                                                                    board_id=destination_board_id,
-                                                                    name=origin_list_name)
-                            if destination_list_id:
-                                updated = self.api.call_api("move_card", card_id=destination_card_id,
-                                                            list_id=destination_list_id)
-                                if updated:
-                                    logger.log_info("Destination list updated")
-                                else:
-                                    logger.log_warning("Destination list not updated")
-                            else:
-                                logger.log_warning("Destination list not updated")
-
-                        logger.log_info("Card Updated - " + client_name + " - Id " + destination_card_id)
-                    else:
-                        logger.log_info("Names don't match. Now delete the previously synced card that "
-                                        "is incorrect and create a new one in the correct board")
-                        logger.log_info("Deleting previously synced card")
-                        deleted = self.api.call_api("delete_card", card_id=destination_card_id)
-                        if deleted:
-                            logger.log_info("Card deleted")
-                        else:
-                            logger.log_warning("Card was not deleted. Aborting")
-                            continue
-
-                        logger.log_info("Remove mapping source card id <-> destination card id in file")
-                        FileManager.remove_card_id_mapping(self.card_mapping_file_path, destination_card_id)
-
-                        logger.log_info("Card deleted. Now recreating it")
+                    if not destination_card_id:
+                        logger.log_info("No corresponding destination card id for card id: '%s', "
+                                        "the card has never been synced, we need to create it." % card_id)
 
                         self.sync_new_card(card_id, card_list_id, destination_board_id, card_name,
-                                           card_due_date, card_description, card_attachments, client_name,
-                                           card_quote, card_owner)
+                          card_due_date, card_description, card_attachments, client_name,
+                          card_quote, card_owner)
 
-                        logger.log_info("Card Deleted and Recreated - " + client_name + " - Id " + destination_card_id)
-            else:
-                if not client_name:
-                    logger.log_warning("Client name not found for card id: %s" % card_id)
+                        logger.log_info("New card added to the destination board")
+                    else:
+                        # Check if the client name is the same as the last time it was synced
+                        destination_client_name = FileManager.read_corresponding_destination_client_name(card_id)
+                        # If names are identical then update the card
+                        if client_name == destination_client_name:
+                            logger.log_info("Card synced before with the same name. Updating now...")
+                            # Update name, due date and description
+                            updated = self.api.call_api("update_card", card_id=destination_card_id,
+                                                        name=card_name,
+                                                        due_date=card_due_date,
+                                                        description=card_description)
+                            if updated:
+                                logger.log_info("Card updated with name, due date and description")
+                            else:
+                                logger.log_info("Card update failed with name, due date and description")
+
+                            logger.log_info("Deleting card attachments")
+                            self.api.call_api("delete_card_attachments", card_id=destination_card_id)
+                            logger.log_info("Existing attachments deleted. Now adding new attachments")
+
+                            self.api.call_api("add_card_attachments", card_id=destination_card_id, card_attachments=card_attachments)
+                            logger.log_info("New attachments updated")
+
+                            logger.log_info("Updating quote")
+                            updated = self.api.call_api("update_card_quote", board_id=destination_board_id,
+                                                        card_id=destination_card_id, quote_value=card_quote)
+                            if updated:
+                                logger.log_info("Card quote updated")
+                            else:
+                                logger.log_info("Card quote update failed")
+
+                            logger.log_info("Updating card owner")
+                            updated = self.api.call_api("update_card_owner", board_id=destination_board_id,
+                                                        card_id=destination_card_id, owner=card_owner)
+                            if updated:
+                                logger.log_info("Card owner updated")
+                            else:
+                                logger.log_info("Card owner update failed")
+
+                            logger.log_info("Checking whether the card list has been changed or not")
+                            origin_list_name = self.api.call_api("read_card_list_name_formatted", card_list_id=card_list_id)
+                            trellocard_ = self.api.call_api("read_trello_card", card_id=destination_card_id, basic_info_only=True)
+
+                            destination_list_name = self.api.call_api("read_card_list_name_formatted",
+                                                                      card_list_id=trellocard_.card_list_id)
+
+                            logger.log_info("Checking if the card was moved to another list then move it")
+                            if destination_list_name != origin_list_name:
+                                logger.log_info("Card list was changed. Updating it")
+                                destination_list_id = self.api.call_api("read_list_id",
+                                                                        board_id=destination_board_id,
+                                                                        name=origin_list_name)
+                                if destination_list_id:
+                                    updated = self.api.call_api("move_card", card_id=destination_card_id,
+                                                                list_id=destination_list_id)
+                                    if updated:
+                                        logger.log_info("Destination list updated")
+                                    else:
+                                        logger.log_warning("Destination list not updated")
+                                else:
+                                    logger.log_warning("Destination list not updated")
+
+                            logger.log_info("Card Updated - " + client_name + " - Id " + destination_card_id)
+                        else:
+                            logger.log_info("Names don't match. Now delete the previously synced card that "
+                                            "is incorrect and create a new one in the correct board")
+                            logger.log_info("Deleting previously synced card")
+                            deleted = self.api.call_api("delete_card", card_id=destination_card_id)
+                            if deleted:
+                                logger.log_info("Card deleted")
+                            else:
+                                logger.log_warning("Card was not deleted. Aborting")
+                                continue
+
+                            logger.log_info("Remove mapping source card id <-> destination card id in file")
+                            FileManager.remove_card_id_mapping(self.card_mapping_file_path, destination_card_id)
+
+                            logger.log_info("Card deleted. Now recreating it")
+
+                            self.sync_new_card(card_id, card_list_id, destination_board_id, card_name,
+                                               card_due_date, card_description, card_attachments, client_name,
+                                               card_quote, card_owner)
+
+                            logger.log_info("Card Deleted and Recreated - " + client_name + " - Id " + destination_card_id)
                 else:
-                    logger.log_warning("Client name not in client board mapping")
+                    if not client_name:
+                        logger.log_warning("Client name not found for card id: %s" % card_id)
+                    else:
+                        logger.log_warning("Client name not in client board mapping")
+            except Exception as exp:
+                logger.log_warning("Exception for card: %s: %s" % (card_id, str(exp)))
 
     def perform_post_cleanup(self):
         logger.log_info("Performing post cleanup")
@@ -299,21 +306,24 @@ class TrelloCardSyncProgram(object):
         for source_card in source_card_list_from_mapping_file:
             # If it's not in the source board
             if source_card not in source_card_list:
-                # Delete the corresponding card
-                corresponding_destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path,
-                                                                                                       source_card)
-                self.api.call_api("delete_card", card_id=corresponding_destination_card_id)
+                try:
+                    # Delete the corresponding card
+                    corresponding_destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path,
+                                                                                                           source_card)
+                    self.api.call_api("delete_card", card_id=corresponding_destination_card_id)
 
-                # Remove mapping source card id <-> destination card id in file
-                FileManager.remove_card_id_mapping(self.card_mapping_file_path, source_card)
+                    # Remove mapping source card id <-> destination card id in file
+                    FileManager.remove_card_id_mapping(self.card_mapping_file_path, source_card)
 
-                logger.log_info("Card Deleted from destination " + destination_card_id)
+                    logger.log_info("Card Deleted from destination " + destination_card_id)
+                except Exception as exp:
+                    logger.log_warning("Exception in post cleanup. %s" % str(exp))
 
     def start_sync(self):
         self.perform_prerequisites()
         self.read_cards_for_board_sync()
         self.perform_sync()
-        # self.perform_post_cleanup()
+        self.perform_post_cleanup()
 
     def __enter__(self):
         self.config = ConfigManager()
