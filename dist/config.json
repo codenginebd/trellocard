@@ -1,0 +1,18 @@
+{
+  "api": {
+    "api_key": "87ec21ab70e9c43360b0f12ab83862ce",
+    "api_token": "2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02"
+  },
+  "board_id_to_sync": "rEICc3JH",
+  "log": {
+    "log_directory": ""
+  },
+  "files": {
+     "card_mapping_file": "mapping/card_mapping.csv",
+     "client_board_mapping": "mapping/client_board_mapping.csv"
+  },
+  "program": {
+     "lock_file_directory": "",
+     "lock_file_name": "program.lock"
+  }
+}
