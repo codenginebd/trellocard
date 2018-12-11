@@ -29,7 +29,7 @@ class HttpRequest(object):
         }
         return success_status_code_mapping[request_method]
 
-    def perform_request(self, request_method, url, params=None, json=False):
+    def perform_request(self, request_method, url, params=None, json=False, timeout=300):
         try:
 
             if request_method not in self.allowed_methods:
@@ -42,7 +42,8 @@ class HttpRequest(object):
 
             method_invoke = getattr(requests, request_method)
             method_invoke_params = {
-                'url': url
+                'url': url,
+                'timeout': timeout
             }
             if params:
                 if json:

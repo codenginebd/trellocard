@@ -143,8 +143,8 @@ class TrelloAPICardQueryMixin(object):
 
                     if quote_custom_field_value and owner_custom_field_value:
                         break
-                except TrelloCardException as exp:
-                    logger.log_warning("Keyerror in method read_card_custom_fields. Exception: %s" % str(exp))
+                except KeyError as kerr:
+                    logger.log_warning("Keyerror in method read_card_custom_fields. Exception: %s" % str(kerr))
 
             return quote_custom_field_value, owner_custom_field_value
         except TrelloCardException as exp:
