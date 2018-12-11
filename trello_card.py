@@ -61,7 +61,8 @@ class TrelloCardSyncProgram(object):
 
         logger.log_info("Checking if card mapping file is writable or not")
         if not os.access(self.card_mapping_file_path, os.W_OK):
-            logger.log_info("%s is not writable" % self.card_mapping_file_path)
+            logger.log_info("%s is not writable. Aborting..." % self.card_mapping_file_path)
+            exit()
         else:
             logger.log_info("Found %s writable" % self.card_mapping_file_path)
 
@@ -72,6 +73,8 @@ class TrelloCardSyncProgram(object):
         if not self.client_board_mapping_file_path or not os.path.exists(self.client_board_mapping_file_path):
             logger.log_warning(
                 "client mapping file either not found or invalid. %s" % self.client_board_mapping_file_path)
+            logger.log_warning("Aborting...")
+            exit()
 
         logger.log_info("client board id mapping file found: %s" % self.client_board_mapping_file_path)
 
@@ -125,27 +128,33 @@ class TrelloCardSyncProgram(object):
         saved = FileManager.save_card_mapping(self.card_mapping_file_path, card_id, destination_card_id, client_name)
         if not saved:
             logger.log_warning("Saving card mapping failed")
-            return
+
         logger.log_info("Adding card attachments")
 
         self.api.call_api("add_card_attachments", card_id=destination_card_id, card_attachments=card_attachments)
         logger.log_info("Card attachments added in destination card")
 
         logger.log_info("Updating Card quote")
-        updated = self.api.call_api("update_card_quote", board_id=destination_board_id,
-                                    card_id=destination_card_id, quote_value=card_quote)
-        if updated:
-            logger.log_info("Card quote updated successfully")
+        if card_quote:
+            updated = self.api.call_api("update_card_quote", board_id=destination_board_id,
+                                        card_id=destination_card_id, quote_value=card_quote)
+            if updated:
+                logger.log_info("Card quote updated successfully")
+            else:
+                logger.log_info("Card quote update failed")
         else:
-            logger.log_info("Card quote update failed")
+            logger.log_warning("Card quote not found")
 
         logger.log_info("Updating card owner")
-        updated = self.api.call_api("update_card_owner", board_id=destination_board_id,
-                                    card_id=destination_card_id, owner=card_owner)
-        if updated:
-            logger.log_info("Card owner updated successfully")
+        if card_owner:
+            updated = self.api.call_api("update_card_owner", board_id=destination_board_id,
+                                        card_id=destination_card_id, owner=card_owner)
+            if updated:
+                logger.log_info("Card owner updated successfully")
+            else:
+                logger.log_info("Card owner update failed")
         else:
-            logger.log_info("Card owner update failed")
+            logger.log_warning("Card owner not found")
 
         logger.log_info("Card Created - " + client_name + " - Id " + destination_card_id)
 
@@ -173,6 +182,11 @@ class TrelloCardSyncProgram(object):
                                                            card_id=card_id)
                 # Get the corresponding destination card id in file
                 destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path, card_id)
+
+                logger.log_info("card_list_id=%s, card_name=%s, card_due_date=%s, card_description=%s, "
+                                "card_attachments=%s, card_quote=%s, card_owner=%s, destination_card_id=%s" %
+                                (card_list_id, card_name, card_due_date, card_description, str(card_attachments),
+                                 card_quote, card_owner, destination_card_id))
 
                 if not destination_card_id:
                     logger.log_info("No corresponding destination card id for card id: '%s', "
@@ -299,6 +313,7 @@ class TrelloCardSyncProgram(object):
         self.perform_prerequisites()
         self.read_cards_for_board_sync()
         self.perform_sync()
+        # self.perform_post_cleanup()
 
     def __enter__(self):
         self.config = ConfigManager()

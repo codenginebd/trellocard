@@ -23,7 +23,7 @@ class HttpRequest(object):
     def get_success_status_code(self, request_method):
         success_status_code_mapping = {
             HttpMethod.GET.value: 200,
-            HttpMethod.POST.value: 201,
+            HttpMethod.POST.value: 200,
             HttpMethod.PUT.value: 200,
             HttpMethod.DELETE.value: 200
         }

@@ -16,7 +16,7 @@ class TrelloAPICardCRUDMixin(object):
         payload = {"name":name,"desc":description,"due":due_date,"idList":list_id}
         response = self.http_request.post(url=api_url, data=payload)
         if response and "id" in response:
-            card_id = response["id"]
+            card_id = response.get("id")
             logger.log_info("Card created with id: % and payload: %s" % (card_id, str(payload)))
             return card_id
         logger.log_warning("No card created with info: %s" % (str(payload)))
@@ -77,10 +77,11 @@ class TrelloAPICardCRUDMixin(object):
             logger.log_info("card quote update failed. No response found for quote custom field id")
             return False
         for custom_field in response:
-            custom_field_id = custom_field["id"].strip()
-            custom_field_name = custom_field["name"].strip()
-            if custom_field_name == "Quote":
-                quote_custom_field_id = custom_field_id
+            if "id" in custom_field and "name" in custom_field:
+                custom_field_id = custom_field["id"].strip()
+                custom_field_name = custom_field["name"].strip()
+                if custom_field_name == "Quote":
+                    quote_custom_field_id = custom_field_id
 
         if not quote_custom_field_id:
             logger.log_info("card quote update failed. No quote custom field id found from quote custom field API response")
@@ -112,15 +113,16 @@ class TrelloAPICardCRUDMixin(object):
         owner_custom_field_id = None
         owner_custom_field_value_id = None
         for custom_field in response:
-            custom_field_id = custom_field["id"].strip()
-            custom_field_name = custom_field["name"].strip()
-            if custom_field_name == "Owner":
-                owner_custom_field_id = custom_field_id
-                owner_custom_field_values = custom_field["options"]
-                for value in owner_custom_field_values:
-                    if value["value"]["text"].strip() == owner:
-                        owner_custom_field_value_id = value["id"]
-                        break
+            if "id" in custom_field and "name" in custom_field:
+                custom_field_id = custom_field["id"].strip()
+                custom_field_name = custom_field["name"].strip()
+                if custom_field_name == "Owner":
+                    owner_custom_field_id = custom_field_id
+                    owner_custom_field_values = custom_field["options"]
+                    for value in owner_custom_field_values:
+                        if value["value"]["text"].strip() == owner:
+                            owner_custom_field_value_id = value["id"]
+                            break
 
         if any([not owner_custom_field_id, not owner_custom_field_value_id]):
             logger.log_warning("Owner custom field value could not be updated. Both custom field id and custom field value id missing")

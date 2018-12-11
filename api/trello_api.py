@@ -27,13 +27,14 @@ class TrelloAPI(APIBase, TrelloAPICardQueryMixin, TrelloAPICardCRUDMixin):
 
     def build_api_url(self, relative_path, **url_params):
         # relative_path = 1/cards/" + card_id + "/attachments
-        get_params = [
-            "key=%s" % self.api_key,
-            "token=%s" % self.api_token
-        ]
+        get_params = []
         if url_params:
             for k, v in url_params.items():
                 get_params += ["%s=%s" % (k, v)]
+        get_params += [
+            "key=%s" % self.api_key,
+            "token=%s" % self.api_token
+        ]
         get_params_string = "&".join(get_params)
         api_url = "%s/%s?%s" % (self.base_url, relative_path, get_params_string)
         return api_url
