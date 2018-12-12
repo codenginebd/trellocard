@@ -187,6 +187,7 @@ class TrelloCardSyncProgram(object):
                                                                card_id=card_id)
                     # Get the corresponding destination card id in file
                     destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path, card_id)
+                    logger.log_info("Destination card id for card %s: %s" % (card_id, destination_card_id))
 
                     logger.log_info("card_list_id=%s, card_name=%s, card_due_date=%s, card_description=%s, "
                                     "card_attachments=%s, card_quote=%s, card_owner=%s, destination_card_id=%s" %
@@ -204,8 +205,10 @@ class TrelloCardSyncProgram(object):
                         logger.log_info("New card added to the destination board")
                     else:
                         # Check if the client name is the same as the last time it was synced
-                        destination_client_name = FileManager.read_corresponding_destination_client_name(card_id)
+                        logger.log_info("Check if the client name is the same as the last time it was synced")
+                        destination_client_name = FileManager.read_corresponding_destination_client_name(self.card_mapping_file_path, card_id)
                         # If names are identical then update the card
+                        logger.log_info("Client name: %s and destination client name: %s" % (client_name, destination_client_name))
                         if client_name == destination_client_name:
                             logger.log_info("Card synced before with the same name. Updating now...")
                             # Update name, due date and description
