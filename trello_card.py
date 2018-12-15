@@ -186,7 +186,8 @@ class TrelloCardSyncProgram(object):
                                                                board_id=self.board_id_to_sync,
                                                                card_id=card_id)
                     # Get the corresponding destination card id in file
-                    destination_card_id = FileManager.read_corresponding_destination_card_id(self.card_mapping_file_path, card_id)
+                    destination_card_id = FileManager.read_corresponding_destination_card_id(file_path=self.card_mapping_file_path,
+                                                                                             card_id_to_find=card_id)
                     logger.log_info("Destination card id for card %s: %s" % (card_id, destination_card_id))
 
                     logger.log_info("card_list_id=%s, card_name=%s, card_due_date=%s, card_description=%s, "
@@ -206,7 +207,8 @@ class TrelloCardSyncProgram(object):
                     else:
                         # Check if the client name is the same as the last time it was synced
                         logger.log_info("Check if the client name is the same as the last time it was synced")
-                        destination_client_name = FileManager.read_corresponding_destination_client_name(self.card_mapping_file_path, card_id)
+                        destination_client_name = FileManager.read_corresponding_destination_client_name(file_path=self.card_mapping_file_path,
+                                                                                                         card_id_to_find=card_id)
                         # If names are identical then update the card
                         logger.log_info("Client name: %s and destination client name: %s" % (client_name, destination_client_name))
                         if client_name == destination_client_name:
@@ -252,6 +254,9 @@ class TrelloCardSyncProgram(object):
                                                                       card_list_id=trellocard_.card_list_id)
 
                             logger.log_info("Checking if the card was moved to another list then move it")
+                            logger.log_info("Original Card Id: %s, Destination Card Id: %s,"
+                                            " Origin list name: %s and destination list name: %s" %
+                                            (card_id, destination_card_id, origin_list_name, destination_list_name))
                             if destination_list_name != origin_list_name:
                                 logger.log_info("Card list was changed. Updating it")
                                 destination_list_id = self.api.call_api("read_list_id",
@@ -328,6 +333,21 @@ class TrelloCardSyncProgram(object):
         self.perform_sync()
         self.perform_post_cleanup()
 
+    def test(self):
+        self.perform_prerequisites()
+        self.api = TrelloAPI(api_key=self.api_key, api_token=self.api_token)
+        # trello_card = self.api.call_api('read_trello_card', card_id='5c062dc5e8e6166b3129fd09', basic_info_only=True)
+        # print("Source Card: %s" % trello_card)
+        # tc2 = self.api.call_api('read_trello_card', card_id='5c114d043fccb34632c6cadd', basic_info_only=True)
+        # print("Destination Card: %s" % tc2)
+        # cln = self.api.call_api('read_card_list_name_formatted', card_list_id='5a6084e9868303a7c358962f')
+        # print("Name" + cln)
+        # c_id = self.api.call_api('read_list_id', board_id='NL22QylC', name=cln)
+        # print(c_id)
+        cln = self.api.call_api('read_card_list_name_formatted', card_list_id='5bec13d39c435b2ba2ec1a62')
+        print("Name: " + cln)
+
+
     def __enter__(self):
         self.config = ConfigManager()
 
@@ -356,3 +376,4 @@ if __name__ == "__main__":
     trellocard_sync_instance = TrelloCardSyncProgram()
     with trellocard_sync_instance:
         trellocard_sync_instance.start_sync()
+        # trellocard_sync_instance.test()
