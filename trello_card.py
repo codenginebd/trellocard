@@ -285,7 +285,7 @@ class TrelloCardSyncProgram(object):
                                 continue
 
                             logger.log_info("Remove mapping source card id <-> destination card id in file")
-                            FileManager.remove_card_id_mapping(self.card_mapping_file_path, destination_card_id)
+                            FileManager.remove_card_id_mapping(file_path=self.card_mapping_file_path, card_id=destination_card_id)
 
                             logger.log_info("Card deleted. Now recreating it")
 
