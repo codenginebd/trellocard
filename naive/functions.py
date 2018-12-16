@@ -471,3 +471,8 @@ def move_card(card_id, list_id, api_key, api_token):
     url = "https://api.trello.com/1/cards/" + card_id + "?key=" + api_key + "&token=" + api_token
     data = {"idList":list_id}
     response = requests.put(url, json = data)
+
+
+if __name__ == "__main__":
+    owner = get_card_owner("rEICc3JH", "5c10a179e0a2d830b821a495", "87ec21ab70e9c43360b0f12ab83862ce", "2c58cca71f0500e9e26b15099517c543152fbca27620d403a244300302bd9e02")
+    print(owner)

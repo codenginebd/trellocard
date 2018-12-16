@@ -344,8 +344,11 @@ class TrelloCardSyncProgram(object):
         # print("Name" + cln)
         # c_id = self.api.call_api('read_list_id', board_id='NL22QylC', name=cln)
         # print(c_id)
-        cln = self.api.call_api('read_card_list_name_formatted', card_list_id='5bec13d39c435b2ba2ec1a62')
-        print("Name: " + cln)
+        quote_custom_field_value, owner_custom_field_value = self.api.call_api('read_card_custom_fields',
+                                                                               board_id='rEICc3JH',
+                                                                               card_id='aSrkEGPp')
+        print("Quote: %s" % quote_custom_field_value)
+        print("Owner: %s" % owner_custom_field_value)
 
 
     def __enter__(self):

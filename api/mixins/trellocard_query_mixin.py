@@ -118,8 +118,6 @@ class TrelloAPICardQueryMixin(object):
                 logger.log_warning("No custom field id found associated with the board id: %s" % board_id)
                 return None, None
 
-            # Now get the custom field values
-            quote_custom_field_value, owner_custom_field_value = None, None
             #  url = "https://api.trello.com/1/cards/" + card_id + "?fields=name&customFieldItems=true&key=" + api_key + "&token=" + api_token
             api_path = "%s/%s/%s" % (self.api_version, self.api_endpoint_card, card_id)
             extra_params = {
@@ -127,25 +125,50 @@ class TrelloAPICardQueryMixin(object):
                 "customFieldItems": "true"
             }
             api_url = self.build_api_url(api_path, **extra_params)
-            response = self.http_request.get(api_url)
-            if not response or "customFieldItems" not in response:
+            response2 = self.http_request.get(api_url)
+            if not response2 or "customFieldItems" not in response2:
                 logger.log_warning("No custom field value found for board id: %s and card id: %s" % (board_id, card_id))
                 return None, None
 
-            card_custom_fields = response["customFieldItems"]
+            # Now get the custom field values
+            quote_custom_field_value, owner_custom_field_value = None, None
+
+            quote_custom_field_value_id, owner_custom_field_value_id = None, None
+            card_custom_fields = response2["customFieldItems"]
+            # logger.log_info("***********customFieldItems************")
+            # logger.log_info(str(card_custom_fields))
+            # logger.log_info(owner_custom_field_id)
+            # logger.log_info("***********************")
             for i in range(len(card_custom_fields)):
                 try:
                     custom_field_id = card_custom_fields[i]["idCustomField"]
                     if custom_field_id == quote_custom_field_id:
                         quote_custom_field_value = card_custom_fields[i]["value"]["number"]
                     elif custom_field_id == owner_custom_field_id:
-                        owner_custom_field_value = card_custom_fields[i]["value"]["number"]
+                        owner_custom_field_value_id = card_custom_fields[i]["idValue"]
 
-                    if quote_custom_field_value and owner_custom_field_value:
+                    if quote_custom_field_value and owner_custom_field_value_id:
                         break
                 except KeyError as kerr:
                     logger.log_warning("Keyerror in method read_card_custom_fields. Exception: %s" % str(kerr))
+                    return None, None
 
+            # logger.log_info("***********************")
+            # logger.log_info(str(response))
+            # logger.log_info(owner_custom_field_id)
+            # logger.log_info(owner_custom_field_value_id)
+            # logger.log_info("***********************")
+            for custom_field in response:
+                custom_field_id = custom_field["id"]
+                if custom_field_id == owner_custom_field_id:
+                    custom_field_values = custom_field["options"]
+                    for value in custom_field_values:
+                        if value["id"] == owner_custom_field_value_id:
+                            owner_custom_field_value = value["value"]["text"].strip()
+                            break
+                    break
+
+            logger.log_info("Found quote: %s and owner: %s" % (quote_custom_field_value, owner_custom_field_value))
             return quote_custom_field_value, owner_custom_field_value
         except TrelloCardException as exp:
             logger.log_warning("Exception in method read_card_custom_fields. Exception: %s" % str(exp))

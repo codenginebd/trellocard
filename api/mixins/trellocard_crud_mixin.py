@@ -36,7 +36,7 @@ class TrelloAPICardCRUDMixin(object):
 
     def add_card_attachments(self, card_id, card_attachments):
         for attachment in card_attachments:
-            if len(attachment) != 2:
+            if len(attachment) < 2:
                 continue
             attachment_name = attachment[0]
             attachment_url = attachment[1]
