@@ -185,8 +185,9 @@ class TrelloCardSyncProgram(object):
                 logger.log_info("Card quote update failed")
                 logger.log_info("Card quote update failed", pretty=True)
         else:
-            logger.log_warning("Card quote not found")
-            logger.log_warning("Card quote not found to update in the destination card", pretty=True)
+            if card_list_name != 'Received':
+                logger.log_warning("Card quote not found")
+                logger.log_warning("Card quote not found to update in the destination card", pretty=True)
 
         logger.log_info("Updating card owner")
         logger.log_info("Updating card owner in the destination card", pretty=True)
@@ -200,8 +201,9 @@ class TrelloCardSyncProgram(object):
                 logger.log_info("Card owner update failed")
                 logger.log_info("Card owner update failed", pretty=True)
         else:
-            logger.log_warning("Card owner not found")
-            logger.log_warning("Card owner not found to update in the destination card", pretty=True)
+            if card_list_name not in ['Received', 'Loaded', 'Queued']:
+                logger.log_warning("Card owner not found")
+                logger.log_warning("Card owner not found to update in the destination card", pretty=True)
 
         logger.log_info("Card Created - " + client_name + " - Id " + destination_card_id)
 
